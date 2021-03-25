@@ -1,6 +1,10 @@
+import './app.scss';
+import './core/assets/styles/custom.scss';
+import NavBar from './core/components/Navbar';
+
 const App = () => {   
     return (
-        <h1>App</h1>
+        <NavBar />
     );
 }
 
