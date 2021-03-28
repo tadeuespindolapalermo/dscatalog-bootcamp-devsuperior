@@ -5,7 +5,7 @@ import './styles.scss'
 
 const Home = () => (
     <div className="home-container">
-        <div className="row home-content">
+        <div className="row home-content card-base border-radius-20">
             <div className="col-6">
                 <h1 className="textTitle">
                     Conheça o melhor <br /> catálogo de produtos
