@@ -1,5 +1,5 @@
 import { Product } from 'core/types/Product';
-import ProductPrice from '../ProductPrice';
+import ProductPrice from 'core/components/ProductPrice';
 import './styles.scss';
 
 type Props = {
