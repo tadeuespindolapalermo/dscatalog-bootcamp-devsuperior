@@ -18,28 +18,30 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<StandardError> entityNotFound(ResourceNotFoundException e, HttpServletRequest request) {
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body((StandardError) getStandardError(e, request, HttpStatus.NOT_FOUND, "Resource not found"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getError(e, request, HttpStatus.NOT_FOUND, "Resource not found"));
 	}
 
 	@ExceptionHandler(DatabaseException.class)
 	public ResponseEntity<StandardError> database(DatabaseException e, HttpServletRequest request) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body((StandardError) getStandardError(e, request, HttpStatus.BAD_REQUEST, "Database exception"));
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getError(e, request, HttpStatus.BAD_REQUEST, "Database exception"));
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ValidationError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
-		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body((ValidationError) getStandardError(e, request, HttpStatus.UNPROCESSABLE_ENTITY, "Validation exception"));
+	public ResponseEntity<Object> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
+		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(getError(e, request, HttpStatus.UNPROCESSABLE_ENTITY, "Validation exception"));
 	}
 
-	private Object getStandardError(Exception e, HttpServletRequest request, HttpStatus status, String error) {		
-		ValidationError err = new ValidationError();
+	private StandardError getError(Exception e, HttpServletRequest request, HttpStatus status, String error) {		
+		StandardError err = new StandardError();
 		err.setTimestamp(Instant.now());
 		err.setStatus(status.value());
 		err.setError(error);
 		err.setMessage(e.getMessage());
 		err.setPath(request.getRequestURI());		
-		if (e instanceof MethodArgumentNotValidException) {			
-			((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors().forEach(f -> err.addError(f.getField(), f.getDefaultMessage()));
+		if (e instanceof MethodArgumentNotValidException) {		
+			ValidationError validationError = new ValidationError(err);			
+			((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors().forEach(f -> validationError.addError(f.getField(), f.getDefaultMessage()));
+			return validationError;
 		}		
 		return err;
 	}
