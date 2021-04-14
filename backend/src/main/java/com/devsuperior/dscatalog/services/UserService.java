@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscatalog.dto.UserDTO;
 import com.devsuperior.dscatalog.dto.UserInsertDTO;
+import com.devsuperior.dscatalog.dto.UserUpdateDTO;
 import com.devsuperior.dscatalog.entities.User;
 import com.devsuperior.dscatalog.repositories.RoleRepository;
 import com.devsuperior.dscatalog.repositories.UserRepository;
@@ -24,7 +25,7 @@ import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
@@ -58,7 +59,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public UserDTO update(Long id, UserDTO dto) {
+	public UserDTO update(Long id, UserUpdateDTO dto) {
 		try {
 			return new UserDTO(repository.save(copyDtoToEntity(dto, repository.getOne(id))));
 		} catch (EntityNotFoundException e) {
