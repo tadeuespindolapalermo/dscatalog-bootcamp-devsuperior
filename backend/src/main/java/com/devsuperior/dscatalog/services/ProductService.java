@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.services;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscatalog.dto.ProductDTO;
+import com.devsuperior.dscatalog.entities.Category;
 import com.devsuperior.dscatalog.entities.Product;
 import com.devsuperior.dscatalog.repositories.CategoryRepository;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
@@ -35,8 +37,9 @@ public class ProductService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<ProductDTO> findAllPaged(PageRequest pageRequest) {
-		return repository.findAll(pageRequest).map(ProductDTO::new);
+	public Page<ProductDTO> findAllPaged(Long categoryId, String name, PageRequest pageRequest) {
+		List<Category> categories = (categoryId == 0) ? null : Arrays.asList(categoryRepository.getOne(categoryId));
+		return repository.find(categories, name, pageRequest).map(ProductDTO::new);
 	}
 
 	@Transactional(readOnly = true)
